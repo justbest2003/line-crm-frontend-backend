@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { broadcastsApi, tagsApi } from '@/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,7 +41,7 @@ export default function Broadcast() {
         setBroadcasts(bRes.data.data);
         setTags(tRes.data);
       })
-      .catch(console.error)
+      .catch(() => toast.error('โหลดข้อมูลไม่สำเร็จ'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -57,11 +58,12 @@ export default function Broadcast() {
       setTitle('');
       setContent('');
       setTargetTagId('');
+      toast.success('ส่ง Broadcast สำเร็จ');
       // Refresh list
       const res = await broadcastsApi.list();
       setBroadcasts(res.data.data);
-    } catch (err) {
-      console.error('Broadcast failed:', err);
+    } catch {
+      toast.error('ส่ง Broadcast ไม่สำเร็จ');
     } finally {
       setSending(false);
     }

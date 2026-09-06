@@ -20,6 +20,20 @@ async function main() {
   });
   console.log(`Admin: ${admin.email} (password: admin1234)`);
 
+  // Seed staff user
+  const staffHash = await bcrypt.hash('staff1234', 12);
+  const staff = await prisma.admin.upsert({
+    where: { email: 'staff@linecrm.local' },
+    update: {},
+    create: {
+      name: 'Staff',
+      email: 'staff@linecrm.local',
+      passwordHash: staffHash,
+      role: 'staff',
+    },
+  });
+  console.log(`Staff: ${staff.email} (password: staff1234)`);
+
   // Seed sample tags
   const tagData = [
     { name: 'VIP', color: '#8B5CF6' },

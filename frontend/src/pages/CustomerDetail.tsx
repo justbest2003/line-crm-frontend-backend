@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { customersApi, tagsApi } from '@/api/client';
 import { Button } from '@/components/ui/button';
@@ -78,8 +79,8 @@ export default function CustomerDetail() {
       setMessages(msgRes.data.data);
       setTags(tagsRes.data);
       setNotes(custRes.data.notes || '');
-    } catch (err) {
-      console.error('Failed to fetch customer:', err);
+    } catch {
+      toast.error('โหลดข้อมูลลูกค้าไม่สำเร็จ');
     } finally {
       setLoading(false);
     }
@@ -110,8 +111,8 @@ export default function CustomerDetail() {
       setReplyText('');
       const res = await customersApi.getMessages(id);
       setMessages(res.data.data);
-    } catch (err) {
-      console.error('Failed to send reply:', err);
+    } catch {
+      toast.error('ส่งข้อความไม่สำเร็จ');
     } finally {
       setSending(false);
     }
@@ -122,8 +123,9 @@ export default function CustomerDetail() {
     try {
       await customersApi.takeover(id);
       setHandledBy('human');
-    } catch (err) {
-      console.error('Takeover failed:', err);
+      toast.success('เปลี่ยนเป็นโหมด Admin แล้ว');
+    } catch {
+      toast.error('Takeover ไม่สำเร็จ');
     }
   };
 
@@ -132,8 +134,9 @@ export default function CustomerDetail() {
     try {
       await customersApi.release(id);
       setHandledBy('bot');
-    } catch (err) {
-      console.error('Release failed:', err);
+      toast.success('เปลี่ยนเป็นโหมด Bot แล้ว');
+    } catch {
+      toast.error('Release ไม่สำเร็จ');
     }
   };
 
@@ -142,8 +145,9 @@ export default function CustomerDetail() {
     try {
       const res = await customersApi.update(id, { status: newStatus });
       setCustomer(res.data);
-    } catch (err) {
-      console.error('Status update failed:', err);
+      toast.success('อัพเดท Status แล้ว');
+    } catch {
+      toast.error('อัพเดท Status ไม่สำเร็จ');
     }
   };
 
@@ -151,8 +155,9 @@ export default function CustomerDetail() {
     if (!id) return;
     try {
       await customersApi.update(id, { notes });
-    } catch (err) {
-      console.error('Save notes failed:', err);
+      toast.success('บันทึก Notes แล้ว');
+    } catch {
+      toast.error('บันทึก Notes ไม่สำเร็จ');
     }
   };
 
@@ -163,7 +168,10 @@ export default function CustomerDetail() {
       const res = await customersApi.getById(id);
       setCustomer(res.data);
       setShowTagPicker(false);
-    } catch {}
+      toast.success('เพิ่ม Tag แล้ว');
+    } catch {
+      toast.error('เพิ่ม Tag ไม่สำเร็จ');
+    }
   };
 
   const handleRemoveTag = async (tagId: string) => {
@@ -172,7 +180,10 @@ export default function CustomerDetail() {
       await customersApi.removeTag(id, tagId);
       const res = await customersApi.getById(id);
       setCustomer(res.data);
-    } catch {}
+      toast.success('ลบ Tag แล้ว');
+    } catch {
+      toast.error('ลบ Tag ไม่สำเร็จ');
+    }
   };
 
   if (loading) {

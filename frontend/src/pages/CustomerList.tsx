@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { customersApi, tagsApi } from '@/api/client';
 import { Button } from '@/components/ui/button';
@@ -83,8 +84,8 @@ export default function CustomerList() {
       setCustomers(res.data.data);
       setTotal(res.data.total);
       setTotalPages(res.data.totalPages);
-    } catch (err) {
-      console.error('Failed to fetch customers:', err);
+    } catch {
+      toast.error('โหลดรายชื่อลูกค้าไม่สำเร็จ');
     } finally {
       setLoading(false);
     }
